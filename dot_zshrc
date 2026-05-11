@@ -1,7 +1,4 @@
 # Created by newuser for 5.9
-### bling.sh source start
-test -f /usr/share/ublue-os/bling/bling.sh && source /usr/share/ublue-os/bling/bling.sh
-### bling.sh source end
 # Make my default editor vim
 export EDITOR=vim
 # Manually source plugins downloaded by chezmoi
