@@ -1,0 +1,9 @@
+# Initialize Starship
+if command -v starship &> /dev/null; then
+  # Use 'zsh' if this is sourced in .zshrc, otherwise 'bash'
+  {{- if (contains "zsh" .chezmoi.targetFile) }}
+  eval "$(starship init zsh)"
+  {{- else }}
+  eval "$(starship init bash)"
+  {{- end }}
+fi

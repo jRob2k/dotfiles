@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# This script will run whenever this file changes. The comment below will change when there's a new Starship release
+# Starship version: {{ (gitHubLatestRelease "starship/starship").TagName }}
+
+if command -v starship &> /dev/null; then
+    echo "Starship is already installed. Checking for updates..."
+fi
+
+# Detect OS and install/update
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    case $ID in
+        fedora)
+            # For Fedora Atomic (Bazzite/Bluefin), use brew or binary if not in image
+            if command -v brew &> /dev/null; then
+                brew install starship
+            else
+                curl -sS https://starship.rs/install.sh | sh -s -- -y
+            fi
+            ;;
+        nixos)
+            # On NixOS, Starship should ideally be in your configuration.nix or home.nix
+            echo "On NixOS, please ensure 'programs.starship.enable = true' is in your Nix config."
+            ;;
+        *)
+            # Default to the universal binary installer
+            curl -sS https://starship.rs/install.sh | sh -s -- -y
+            ;;
+    esac
+fi
