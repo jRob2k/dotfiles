@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Trigger update when this version changes: 
+# GH_VERSION: {{ (gitHubLatestRelease "cli/cli").TagName }}
+
+set -eufo pipefail
+
+{{ if eq .chezmoi.os "linux" -}}
+  {{ if eq .chezmoi.osRelease.id "nixos" -}}
+    echo "On NixOS: Ensure 'pkgs.gh' are in your nix configuration."
+  {{ else if (or (eq .chezmoi.osRelease.id "fedora") (eq .chezmoi.osRelease.id "bazzite")) -}}
+    # Fedora/Bazzite logic. Use homebrew
+    if ! command -v gh &> /dev/null; then
+	brew install gh
+    fi
+  {{ else -}}
+    # Universal Fallback (e.g., Ubuntu, Debian, or generic Linux)
+    # GH CLI via script
+    if ! command -v gh &> /dev/null; then
+        type -p curl >/dev/null || sudo apt install curl -y
+        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+        sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+        sudo apt update && sudo apt install gh -y
+    fi
+  {{ end -}}
+{{ end -}}
+
