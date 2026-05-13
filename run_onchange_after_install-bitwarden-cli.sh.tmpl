@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Trigger update when this version changes: 
+# This line should change when the client release changes
+# BW_VERSION: {{ (gitHubLatestRelease "bitwarden/clients").TagName }}
+
+set -eufo pipefail
+
+{{ if eq .chezmoi.os "linux" -}}
+  {{ if eq .chezmoi.osRelease.id "nixos" -}}
+    echo "On NixOS: Ensure 'pkgs.bitwarden-cli' are in your nix configuration."
+  {{ else if (or (eq .chezmoi.osRelease.id "fedora") (eq .chezmoi.osRelease.id "bazzite")) -}}
+    if ! command -v bw &> /dev/null; then
+	brew install bitwarden-cli
+    else
+	brew upgrade bitwarden-cli
+    fi
+  {{ end -}}
+{{ end -}}
