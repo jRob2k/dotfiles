@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Trigger update when this version changes: 
+# This line should change when the client release changes
+# BAT_VERSION: {{ (gitHubLatestRelease "sharkdp/bat").TagName }}
+
+set -eufo pipefail
+
+{{ if eq .chezmoi.os "linux" -}}
+  {{ if eq .chezmoi.osRelease.id "nixos" -}}
+    echo "On NixOS: Ensure 'pkgs.bat' are in your nix configuration."
+  {{ else if (or (eq .chezmoi.osRelease.id "fedora") (eq .chezmoi.osRelease.id "bazzite")) -}}
+    echo "Checking for Bat install"
+    if ! command -v bat &> /dev/null; then
+      echo "Bat not found. Installing with Linuxbrew."
+      brew install bat
+    else
+      echo "Bat found. Checking for available updates and installing if found."
+      brew upgrade $(brew outdated --quiet bat)
+    fi
+  {{ end -}}
+{{ end -}}
