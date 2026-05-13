@@ -10,8 +10,13 @@ set -eufo pipefail
     echo "On NixOS: Ensure 'pkgs.gh' are in your nix configuration."
   {{ else if (or (eq .chezmoi.osRelease.id "fedora") (eq .chezmoi.osRelease.id "bazzite")) -}}
     # Fedora/Bazzite logic. Use homebrew
+    echo "Checking for Github CLI install"
     if ! command -v gh &> /dev/null; then
-	brew install gh
+        echo "Github CLI not found. Installing with Linuxbrew."
+        brew install gh
+    else
+      echo "Github CLI found. Checking for available updates and installing if found."
+      brew upgrade $(brew outdated --quiet gh)
     fi
   {{ else -}}
     # Universal Fallback (e.g., Ubuntu, Debian, or generic Linux)

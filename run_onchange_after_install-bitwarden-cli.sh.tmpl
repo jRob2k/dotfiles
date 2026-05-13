@@ -10,10 +10,13 @@ set -eufo pipefail
   {{ if eq .chezmoi.osRelease.id "nixos" -}}
     echo "On NixOS: Ensure 'pkgs.bitwarden-cli' are in your nix configuration."
   {{ else if (or (eq .chezmoi.osRelease.id "fedora") (eq .chezmoi.osRelease.id "bazzite")) -}}
+    echo "Checking for Bitwarden-cli install"
     if ! command -v bw &> /dev/null; then
-	brew install bitwarden-cli
+      echo "Bitwarden not found. Installing with Linuxbrew."
+      brew install bitwarden-cli
     else
-	brew upgrade bitwarden-cli
+      echo "Bitwarden found. Checking for available updates and installing if found."
+      brew upgrade $(brew outdated --quiet bitwarden-cli)
     fi
   {{ end -}}
 {{ end -}}
