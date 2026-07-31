@@ -1,3 +1,25 @@
+# Source Bazzite system-wide profile scripts (Flatpak, uBlue, etc.)
+if [ -d /etc/profile.d ]; then
+  for profile in /etc/profile.d/*.sh; do
+    [ -r "$profile" ] && source "$profile"
+  done
+  unset profile
+fi
+
+# Load Homebrew environment
+if [ -d "/home/linuxbrew/.linuxbrew" ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [ -d "$HOME/.linuxbrew" ]; then
+    eval "$($HOME/.linuxbrew/bin/brew shellenv)"
+fi
+
+# Add user local binary directories
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+
+# Change default editor to vi
+export EDITOR="vi"
+export VISUAL="vi"
+
 # Start the starship
 {{ template "starship.tmpl" . }}
 
@@ -6,3 +28,5 @@ source ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 ## NOTE: Syntax highlighting. This needs to be added last
 source ~/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+
