@@ -9,6 +9,7 @@ fi
 {{ if .has_local_ai }}
 # Ollama Podman Alias
 alias ai="podman exec -it ollama ollama run"
+alias ailist="podman exec -it ollama ollama list"
 {{ end }}
 
 # Load Homebrew environment
