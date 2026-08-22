@@ -6,6 +6,11 @@ if [ -d /etc/profile.d ]; then
   unset profile
 fi
 
+{{ if .has_local_ai }}
+# Ollama Podman Alias
+alias ai="podman exec -it ollama ollama run"
+{{ end }}
+
 # Load Homebrew environment
 if [ -d "/home/linuxbrew/.linuxbrew" ]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
